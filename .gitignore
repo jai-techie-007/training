@@ -1,0 +1,8 @@
+nbproject/
+build/
+dist/
+*.class
+*.log
+*.tmp
+.DS_Store
+*.xml
