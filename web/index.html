@@ -1,15 +1,1238 @@
 <!DOCTYPE html>
-<!--
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit this template
--->
-<html>
-    <head>
-        <title>TODO supply a title</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </head>
-    <body>
-        <div>TODO write content Changed Now again1</div>
-    </body>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Excel Training Portal</title>
+    <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <style>
+    :root{
+      --excel:#217346;
+      --excel-700:#1a5c38;
+      --ink:#1f2937;
+      --muted:#6b7280;
+      --bg:#f6f8fb;
+      --card:#ffffff;
+      --accent:#0ea5e9;
+      --brand:#16a34a;
+      --warn:#eab308;
+      --danger:#ef4444;
+      --shadow:0 10px 20px rgba(31,41,55,.08), 0 2px 6px rgba(31,41,55,.06);
+      --radius:16px;
+    }
+    *{box-sizing:border-box;}
+    html,body{height:100%;}
+body {
+  font-family: "Open Sans", sans-serif;
+  background-color: var(--bg);
+  color: var(--ink);
+  margin: 0;
+  padding: 0;
+  line-height: 1.8;
+  font-size: 16px;
+  padding-top: 64px; /* match header height */
+}
+
+
+    
+/* Header */
+.topbar {
+  position: fixed; /* make it fixed */
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: linear-gradient(90deg, var(--excel), var(--excel-700));
+  color: #fff;
+  padding: .75rem 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,.15);
+  display: flex;
+  align-items: center;
+  height: 64px; /* fixed height for consistent spacing */
+}
+
+    .brand{
+      display:flex; align-items:center; gap:1rem; font-weight:700; letter-spacing:.2px;
+    }
+    
+    .title {
+  font-weight: 700;
+  font-size: 1.2rem;
+  letter-spacing: .3px;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+    .brand i{font-size:1.4rem}
+    .brand .trail {
+  color: #c7f9cc;
+  opacity: .9;
+  margin-left: .25rem;
+  filter: drop-shadow(0 1px 0 rgba(0,0,0,.15));
+}
+    .menu-toggle{
+      display:none; font-size:1.5rem; margin-left:auto; cursor:pointer;
+    }
+    /* Layout */
+    .wrap{
+      display:grid;
+      grid-template-columns:240px 1fr;
+      gap:1rem;
+      padding:1rem;
+      max-width:1400px;
+      margin:0 auto;
+    }
+    /* Responsive tweaks */
+    @media (max-width:1024px) and (min-width:769px){
+      .wrap{
+        grid-template-columns:200px 1fr;
+        gap:0.75rem;
+      }
+      .sidemenu{width:200px;}
+      .card{padding:0.75rem 0.9rem;}
+    }
+    @media (max-width:768px){
+      .wrap{
+        grid-template-columns:1fr;
+      }
+      .sidemenu{
+        position:fixed;
+        top:60px;
+        left:0;
+        width:240px;
+        max-height:calc(100dvh - 60px);
+        transform:translateX(-100%);
+        transition:transform 0.3s ease;
+        background:var(--card);
+        box-shadow:var(--shadow);
+        border-radius:0;
+        z-index:1000;
+      }
+      .sidemenu.active{transform:translateX(0);}
+      .menu-toggle{display:block;}
+      main{padding-top:70px;}
+    }
+    /* Sidemenu */
+    .sidemenu{
+      position:sticky; top:64px; align-self:start;
+      max-height: calc(100dvh - 72px);
+      overflow:auto; padding:.75rem;
+      background:var(--card); border-radius:var(--radius);
+      box-shadow:var(--shadow);
+    }
+    .sidemenu h3{
+      margin:.25rem 0 .5rem; font-size:1rem; color:var(--excel); display:flex; align-items:center; gap:.5rem;
+    }
+    .nav{
+      list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:.25rem;
+    }
+    .nav a{
+      display:flex; align-items:center; gap:.6rem;
+      padding:.5rem .6rem; border-radius:10px; text-decoration:none; color:var(--ink); font-weight:600; font-size:.95rem;
+    }
+    .nav a i{opacity:.8; width:18px; text-align:center}
+    .nav a:hover{background:#eef6f0}
+    .nav a.active{background:#e6f4ea; color:var(--brand)}
+    .nav .sub{margin-left:1.5rem; margin-top:.25rem; margin-bottom:.25rem}
+    /* Content */
+    main{display:flex; flex-direction:column; gap:1rem;}
+    .section{scroll-margin-top:84px;}
+    .card{
+      background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow);
+      padding:1rem 1.1rem;
+    }
+    .card h2{margin:.2rem 0 .6rem; font-size:1.4rem;}
+    .card h3{margin:.2rem 0 .4rem; font-size:1.15rem; color:var(--excel);}
+    /* Code blocks */
+    .prewrap{
+      background:#f8fafc; border:1px solid #e5e7eb; border-radius:12px; padding:.5rem; position:relative;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:14px; overflow:auto;
+    }
+    .copy-btn{
+      position:absolute; right:.5rem; top:.5rem; display:inline-flex; align-items:center; gap:.45rem;
+      border:none; background:#e2f8ea; color:var(--brand); padding:.4rem .6rem; border-radius:10px; cursor:pointer; font-weight:700;
+      box-shadow:inset 0 0 0 1px #b7e4c7;
+    }
+    .copy-btn:hover{filter:brightness(.98);}
+    .copy-toast{
+      position:absolute; right:.6rem; top:2.3rem; background:#111827; color:#fff; font-size:.8rem; padding:.2rem .5rem; border-radius:8px; opacity:0; transform:translateY(-6px); pointer-events:none;
+      transition:.2s ease;
+    }
+    .copy-toast.show{opacity:1; transform:translateY(0);}
+    /* Tips */
+    .tip{
+      background:#eef6ff; border-left:3px solid var(--accent); padding:.5rem .75rem; border-radius:8px; font-size:.93rem;
+    }
+    .btn{
+      display:inline-flex; gap:.5rem; align-items:center; background:var(--excel); color:#fff; border:none; border-radius:10px; padding:.55rem .9rem; cursor:pointer; font-weight:700;
+      box-shadow:0 8px 18px rgba(33,115,70,.15);
+    }
+    .btn:hover{background:var(--excel-700);}
+  </style>
+</head>
+<body>
+  <!-- Header -->
+<header class="topbar">
+  <div class="brand">
+    <div class="menu-toggle"><i class="fa-solid fa-bars"></i></div>
+    <span class="title"><i class="fa-solid fa-table"></i> Excel Training</span>
+    <span class="trail"><i class="fa-solid fa-circle-check"></i></span>
+  </div>
+</header>
+
+  <div class="wrap">
+    <!-- Side Navigation -->
+    <aside class="sidemenu" id="sidebar">
+      <h3><i class="fa-solid fa-book"></i> Sections</h3>
+        <ul class="nav">
+          <li><a href="#intro" class="active"><i class="fa-solid fa-house"></i>Overview</a></li>
+          <li><a href="#datasets"><i class="fa-solid fa-database"></i>Datasets (TSV)</a>
+          </li>
+          <li><a href="#steps"><i class="fa-solid fa-list-check"></i>Exercise Steps</a>
+            <ul class="nav sub">
+              <li><a href="#pad-keys"><i class="fa-solid fa-hashtag"></i>Pad & Keys</a></li>
+              <li><a href="#vlookup"><i class="fa-solid fa-magnifying-glass"></i>VLOOKUPs</a></li>
+              <li><a href="#unicode"><i class="fa-solid fa-font"></i>Unicode Status</a></li>
+              <li><a href="#pivot"><i class="fa-solid fa-table-columns"></i>Pivot</a></li>
+              <li><a href="#chart"><i class="fa-solid fa-chart-column"></i>Chart</a></li>
+            <li><a href="#index-match"><i class="fa-solid fa-magnifying-glass-chart"></i> Index Match</a></li>
+            <li><a href="#goal-seek"><i class="fa-solid fa-bullseye"></i> Goal Seek</a></li>
+            <li><a href="#text-to-columns"><i class="fa-solid fa-scissors"></i> Text to Columns</a></li>
+            <li><a href="#flash-fill"><i class="fa-solid fa-bolt"></i> Flash Fill</a></li>
+            <li><a href="#macro"><i class="fa-solid fa-gears"></i> Macros</a></li>
+             <li><a href="#po-assignment"><i class="fa-solid fa-file-contract"></i> Assignment</a></li>
+
+            </ul>
+          </li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+       <!-- Main content -->
+    <main>
+      <!-- Intro -->
+      <section id="intro" class="section card">
+        <h2><i class="fa-solid fa-compass"></i> Overview</h2>
+        <p class="meta">Theme: <span class="badge"><i class="fa-solid fa-file-excel"></i> MS Office Excel Training</span></p>
+        <p>Follow these hands-on exercises end-to-end: paste tab-separated datasets into three working sheets (+ one master sheet), pad & build keys, perform cross-sheet lookups, add Unicode status ticks/crosses, then summarize with a Pivot and visualize with a chart.</p>
+        <div class="tip"><strong>Paste tip:</strong> Use <em>Home → Paste → Paste Special → Text</em> if Excel doesn’t auto-split tabs into columns.</div>
+      </section>
+
+      <!-- Datasets -->
+      <section id="datasets" class="section card">
+        <h2><i class="fa-solid fa-database"></i> Copy Datasets (TSV)</h2>
+        <p class="small muted">Create a new workbook and rename sheets to <strong>Sales</strong>, <strong>Dispatch</strong>, <strong>Projects</strong>, and <strong>Products</strong>. Then copy each TSV block into cell <strong>A1</strong> on its respective sheet.</p>
+
+        <div class="grid cols-2">
+          <!-- Sheet1 -->
+          <div id="sheet1" class="card">
+            <h3><i class="fa-solid fa-sheet-plastic"></i> Sheet1: Sales</h3>
+            <p class="small muted">Columns: SO (10-digit), Item (5-digit), ProjectCode, ProductCode, Order_Qty, Price</p>
+            <div class="prewrap">
+              <button class="copy-btn" data-target="tsv-sales"><i class="fa-solid fa-copy"></i> Copy TSV</button>
+              <div class="copy-toast">Copied!</div>
+              <pre id="tsv-sales">SO	Item	ProjectCode	ProductCode	Order_Qty	Price
+7200010001	9001	P100	10001	5	15000
+7200010002	9002	P100	10002	3	12000
+7200010003	9003	P200	10003	10	18000
+7200010004	9004	P200	10004	2	25000
+7200010005	9005	P200	10005	8	17500
+7200010006	9006	P300	10006	4	13000
+7200010007	9007	P300	10007	6	16000
+7200010008	9008	P100	10008	5	22000
+7200010009	9009	P100	10009	7	19500
+7200010010	9010	P200	10010	3	14500</pre>
+            </div>
+            <div class="tip"><i class="fa-solid fa-lightbulb"></i> Some products repeat to make lookups & pivots meaningful.</div>
+          </div>
+
+          <!-- Sheet2 -->
+          <div id="sheet2" class="card">
+            <h3><i class="fa-solid fa-truck-fast"></i> Sheet2: Dispatch</h3>
+            <p class="small muted">Columns: SO, Item, Disp_Qty</p>
+            <div class="prewrap">
+              <button class="copy-btn" data-target="tsv-dispatch"><i class="fa-solid fa-copy"></i> Copy TSV</button>
+              <div class="copy-toast">Copied!</div>
+              <pre id="tsv-dispatch">SO	Item	Disp_Qty
+7200010001	9001	5
+7200010002	9002	2
+7200010003	9003	10
+7200010004	9004	1
+7200010005	9005	8
+7200010006	9006	4
+7200010007	9007	5
+7200010008	9008	5
+7200010009	9009	6
+7200010010	9010	3</pre>
+            </div>
+          </div>
+
+          <!-- Sheet3 -->
+          <div id="sheet3" class="card">
+            <h3><i class="fa-solid fa-diagram-project"></i> Sheet3: Projects</h3>
+            <p class="small muted">Project master for descriptions</p>
+            <div class="prewrap">
+              <button class="copy-btn" data-target="tsv-projects"><i class="fa-solid fa-copy"></i> Copy TSV</button>
+              <div class="copy-toast">Copied!</div>
+              <pre id="tsv-projects">ProjectCode	ProjectDesc
+P100	NTPC Talcher
+P200	Adani Mahan
+P300	NTPC Lara
+P400	NTPC Singrauli
+P500	Adani Raipur</pre>
+            </div>
+          </div>
+
+          <!-- Sheet4 -->
+          <div id="sheet4" class="card">
+            <h3><i class="fa-solid fa-boxes-stacked"></i> Sheet4: Products</h3>
+            <p class="small muted">Product master (ProductCode is 5 digits, to be zero-padded where needed)</p>
+            <div class="prewrap">
+              <button class="copy-btn" data-target="tsv-products"><i class="fa-solid fa-copy"></i> Copy TSV</button>
+              <div class="copy-toast">Copied!</div>
+              <pre id="tsv-products">ProductCode	ProductDesc
+10001	Header
+10002	Economiser
+10003	Coils
+10004	Superheater
+10005	Reheater
+10006	Valves
+10007	Insulation
+10008	Ducts
+10009	Structures
+10010	Foundation Bolts
+10011	Pumps
+10012	Cooling Water Pipes
+10013	Fasteners</pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Exercise Steps -->
+      <section id="steps" class="section card">
+        <h2><i class="fa-solid fa-list-check"></i> Step-by-Step Exercise</h2>
+
+        <!-- Pad & Keys -->
+        <div id="pad-keys" class="card">
+          <h3><i class="fa-solid fa-hashtag"></i> 1) Pad & Build Keys</h3>
+          <ul class="steps">
+            <li>On <strong>Sales</strong>: add helper columns to the right of <em>Price</em>:
+              <div class="grid"><div class="prewrap"><pre>
+SO_PAD (10-digit): =TEXT(A2,"0000000000")
+ITEM_PAD (5-digit): =TEXT(B2,"00000")
+SO_ITEM key:       =G2 & "-" & H2
+              </pre></div></div>
+            </li>
+            <li>On <strong>Dispatch</strong>: create the same helpers:
+              <div class="grid"><div class="prewrap"><pre>
+SO_PAD:  =TEXT(A2,"0000000000")
+ITEM_PAD:=TEXT(B2,"0000")
+SO_ITEM: =D2 & "-" & E2
+              </pre></div></div>
+            </li>
+            <li class="small muted">Why pad? Ensures consistent text keys (e.g., 10-digit SO, 5-digit Item) for reliable exact-match lookups.</li>
+          </ul>
+        </div>
+
+        <!-- VLOOKUPs -->
+        <div id="vlookup" class="card">
+          <h3><i class="fa-solid fa-magnifying-glass"></i> 2) VLOOKUP Dispatch & Master Data</h3>
+          <ul class="steps">
+            <li>On <strong>Sales</strong>, add <strong>Disp_Qty</strong> to the right of <em>SO_ITEM</em>:
+              <div class="prewrap"><pre>=IFERROR(VLOOKUP($I2, Dispatch!$F$2:$G$11, 2, FALSE), 0)</pre></div>
+              <div class="small muted">Lookup value = Sales!SO_ITEM; Table = Dispatch!SO_ITEM→Disp_Qty; Column index = 2; Exact match.</div>
+            </li>
+            <li>Bring <strong>ProjectDesc</strong> from <strong>Projects</strong>:
+              <div class="prewrap"><pre>=IFERROR(VLOOKUP($C2, Projects!$A$2:$B$6, 2, FALSE), "")</pre></div>
+            </li>
+            <li>Bring <strong>ProductDesc</strong> from <strong>Products</strong>:
+              <div class="prewrap"><pre>=IFERROR(VLOOKUP($D2, Products!$A$2:$B$14, 2, FALSE), "")</pre></div>
+            </li>
+          </ul>
+          <div class="callout"><i class="fa-solid fa-circle-info"></i> If your SO_ITEM column isn’t leftmost in the lookup range, either insert it as the first column or switch to <strong>XLOOKUP</strong> if available.</div>
+        </div>
+
+        <!-- Unicode Status -->
+        <div id="unicode" class="card">
+          <h3><i class="fa-solid fa-font"></i> 3) Unicode Status (✔ / ✘) & Rupee (₹)</h3>
+          <ul class="steps">
+            <li>Add <strong>Status</strong> on Sales — ✔ if fully dispatched, else ✘:
+              <div class="prewrap"><pre>=IF($E2=$J2, UNICHAR(10004), UNICHAR(10008))</pre></div>
+            </li>
+            <li class="small muted">Fonts: use <strong>Segoe UI Symbol</strong> (or similar) for consistent symbols.</li>
+            <li>Optional: Show rupee with price:
+              <div class="prewrap"><pre>=UNICHAR(8377) & " " & $F2   </pre></div>
+            </li>
+          </ul>
+          <div class="kpi"><i class="fa-solid fa-check"></i> Result: visual status & currency display</div>
+        </div>
+
+
+<!-- Pivot -->
+<div id="pivot" class="card">
+  <h3><i class="fa-solid fa-table-columns"></i> 4) Pivot Table (Project ↔ Product)</h3>
+  <ul class="steps">
+    <li>Select the Sales table (including new columns) → <strong>Insert → PivotTable</strong> → new sheet <em>Pivot</em>.</li>
+    <li><strong>Rows:</strong> ProjectDesc, then ProductDesc</li>
+    <li><strong>Values:</strong> Sum of Order_Qty, Sum of Disp_Qty</li>
+    <li><strong>Fulfillment %</strong>:
+      <div class="prewrap"><pre><!-- Option A: Calculated Field -->
+PivotTable Analyze → Fields, Items & Sets → Calculated Field
+Name: Fulfillment%
+Formula: = Disp_Qty / Order_Qty
+      </pre></div>
+    </li>
+  </ul>
+  <div class="tip">
+    <i class="fa-solid fa-wand-magic-sparkles"></i> Format Fulfillment% as Percentage with 1–2 decimals.
+  </div>
+
+  <!-- Extra Tip for Conditional Formatting -->
+  <div class="callout">
+    <i class="fa-solid fa-paintbrush"></i> <strong>Highlight Gaps & Overachievement:</strong>  
+    Apply <strong>Conditional Formatting</strong> to the Fulfillment% column for better visual insights:
+    <ol class="steps small">
+      <li>Select the <strong>Fulfillment%</strong> values in the Pivot.</li>
+      <li>Go to <strong>Home → Conditional Formatting → New Rule</strong>.</li>
+      <li>
+        For gaps:
+        <ul>
+          <li>Choose <strong>“Format only cells that contain”</strong>.</li>
+          <li>Set rule: <strong>Cell Value &lt; 0.8</strong> (for 80%).</li>
+          <li>Format with a <span class="bad">red fill</span> to flag low performance.</li>
+        </ul>
+      </li>
+      <li>
+        For overachievement:
+        <ul>
+          <li>Choose another <strong>“Format only cells that contain”</strong> rule.</li>
+          <li>Set rule: <strong>Cell Value &gt;= 1</strong> (for 100% or more).</li>
+          <li>Format with a <span class="ok">green fill</span> to highlight full or excess fulfillment.</li>
+        </ul>
+      </li>
+    </ol>
+  </div>
+</div>
+
+
+
+        <!-- Chart -->
+     <!-- Chart -->
+<div id="chart" class="card">
+  <h3><i class="fa-solid fa-chart-column"></i> 5) Pivot Charts – Advanced Visualizations</h3>
+  <p class="meta">Enhance your analysis with different chart types from your Pivot Table data.</p>
+
+  <ul class="steps">
+    <li>
+      <strong><i class="fa-solid fa-chart-simple"></i> Clustered Column Chart</strong>  
+      <ul>
+        <li>Insert a <strong>Clustered Column</strong> chart.</li>
+        <li>Axis → <strong>ProjectDesc</strong></li>
+        <li>Values → <strong>Order_Qty</strong> and <strong>Disp_Qty</strong></li>
+        <li>Use contrasting colors for clear visibility.</li>
+      </ul>
+    </li>
+  </ul>
+  </br>
+  <div class="tip">
+    <i class="fa-solid fa-filter"></i> 
+    <strong>Pro Tip:</strong> Add <strong>Slicers</strong> for <em>ProjectDesc</em> or <em>ProductDesc</em> to filter and explore charts interactively.
+  </div>
+</div>
+     
+     
+
+<!-- INDEX-MATCH Section -->
+<div id="index-match" class="card">
+  <h3><i class="fa-solid fa-database"></i> 6) INDEX, MATCH & INDEX+MATCH</h3>
+
+  <p class="intro">
+    Let's learn how to use <strong>INDEX</strong>, <strong>MATCH</strong>, and their combination to perform lookups.
+    We'll use an <strong>Inventory</strong> dataset with no changes to the column order for clarity.
+  </p>
+
+  <!-- Example Table -->
+  <div class="data-block">
+    <h4>Inventory Data (Sheet: <em>Inventory</em>)</h4>
+    <pre class="tsv">
+SO	        Item	ProductDesc	OrderQty	Price
+720001001	9001	Boiler-A	5	        12000
+720001002	9002	Economiser	8	        18500
+720001003	9003	Superheater	10	        22000
+720001004	9004	Economiser	6	        17000
+720001005	9005	Valves	    12	        9000
+    </pre>
+    <p class="tip"><i class="fa-solid fa-lightbulb"></i> Paste the above data in <strong>Sheet: Inventory</strong> starting from cell <code>A1</code>.</p>
+  </div>
+
+  <!-- INDEX Explanation -->
+  <div class="step">
+    <h4><i class="fa-solid fa-arrow-down-1-9"></i> Step 1: INDEX (Direct Position Lookup)</h4>
+    <p>
+      <strong>INDEX</strong> fetches a value from a range by row number.  
+      In an empty cell, try:
+    </p>
+    <pre>=INDEX(D2:D6, 2)</pre>
+    <p>This looks at <code>OrderQty</code> (Column D) and returns the <strong>2nd row</strong>: <strong>8</strong>.</p>
+  </div>
+
+  <!-- MATCH Explanation -->
+  <div class="step">
+    <h4><i class="fa-solid fa-magnifying-glass"></i> Step 2: MATCH (Find Position)</h4>
+    <p>
+      <strong>MATCH</strong> finds the row position of a value.  
+      In an empty cell, try:
+    </p>
+    <pre>=MATCH("Economiser", C2:C6, 0)</pre>
+    <p>This returns <strong>2</strong>, as "Economiser" first appears in <code>C3</code> (second row of range <code>C2:C6</code>).</p>
+  </div>
+
+  <!-- INDEX+MATCH -->
+  <div class="step">
+    <h4><i class="fa-solid fa-link"></i> Step 3: INDEX + MATCH (Dynamic Lookup)</h4>
+    <p>
+      Combine <strong>INDEX</strong> and <strong>MATCH</strong> to dynamically fetch related values.  
+      In a new cell, type:
+    </p>
+    <pre>=INDEX(D2:D6, MATCH("Economiser", C2:C6, 0))</pre>
+    <p>
+      Steps breakdown:
+      <ol>
+        <li><code>MATCH("Economiser", C2:C6, 0)</code> → returns <strong>2</strong></li>
+        <li><code>INDEX(D2:D6, 2)</code> → fetches <strong>8</strong> (the <strong>OrderQty</strong> for Economiser)</li>
+      </ol>
+    </p>
+  </div>
+
+  <!-- VLOOKUP -->
+  <div class="step">
+    <h4><i class="fa-solid fa-table-columns"></i> Step 4: VLOOKUP (For Comparison)</h4>
+    <p>
+      Using <strong>VLOOKUP</strong> to find the <strong>OrderQty</strong> for "Economiser" in the same dataset:
+    </p>
+    <pre>=VLOOKUP("Economiser", C2:E6, 2, FALSE)</pre>
+    <p>
+      This also returns <strong>8</strong>, the first match for "Economiser".  
+      However, remember that <code>VLOOKUP</code> always searches from left to right.
+    </p>
+  </div>
+
+  <!-- Why INDEX+MATCH -->
+  <div class="highlight">
+    <h4><i class="fa-solid fa-thumbs-up"></i> Why Use INDEX + MATCH?</h4>
+    <ul>
+      <li>No need to rearrange columns for lookups.</li>
+      <li>Works left-to-right and right-to-left.</li>
+      <li>Less prone to errors when inserting new columns.</li>
+      <li>Faster for large datasets.</li>
+    </ul>
+  </div>
+
+  <!-- Practice -->
+  <div class="exercise">
+    <h4><i class="fa-solid fa-dumbbell"></i> Practice Exercise</h4>
+    <ol>
+      <li>Paste the dataset in <strong>Sheet: Inventory</strong> starting from <code>A1</code>.</li>
+      <li>In cell <code>G2</code>, use <code>INDEX</code> to return the <strong>2nd OrderQty</strong>.</li>
+      <li>In cell <code>G3</code>, use <code>MATCH</code> to find the position of <strong>Economiser</strong>.</li>
+      <li>In cell <code>G4</code>, combine <code>INDEX + MATCH</code> to get the OrderQty of <strong>Economiser</strong>.</li>
+      <li>Finally, in cell <code>G5</code>, use <code>VLOOKUP</code> for the same result and compare outputs.</li>
+    </ol>
+  </div>
+</div>
+
+
+
+<!-- Goal Seek Section -->
+<!-- Goal Seek Section -->
+<div id="goal-seek" class="card">
+  <h3><i class="fa-solid fa-bullseye"></i> 7) Goal Seek (What-If Analysis)</h3>
+
+  <p class="intro">
+    The <strong>Goal Seek</strong> tool in Excel helps you find the input value needed to achieve a desired result in a formula.
+    It's part of the <em>What-If Analysis</em> tools and is perfect for quick "reverse calculations."
+  </p>
+
+  <!-- Example Scenario 1 -->
+  <div class="data-block">
+    <h4>Example Scenario: Profit Calculation</h4>
+    <p>
+      Suppose you have a product with the following setup:
+    </p>
+    <pre class="tsv">
+<span style="background:#d1fae5">Selling Price</span>	<span style="background:#fef3c7">Cost Price</span>	<span style="background:#bfdbfe">Profit</span>
+<span style="background:#d1fae5">150</span>	<span style="background:#fef3c7">100</span>	<span style="background:#bfdbfe">= A2 - B2</span>
+    </pre>
+    <p>
+      Now, you want to find out:  
+      <strong>"What Selling Price is needed to get a profit of ₹80?"</strong>
+    </p>
+  </div>
+
+  <!-- Example Scenario 2 -->
+  <div class="data-block">
+    <h4>Example Scenario: Boiler Efficiency</h4>
+    <p>
+      For a boiler system, efficiency is calculated using:
+    </p>
+    <pre class="tsv">
+<span style="background:#d1fae5">Steam Produced (kg)</span>	<span style="background:#d1fae5">Enthalpy of Steam (kCal)</span>	<span style="background:#fef3c7">Fuel Consumption (kg)</span>	<span style="background:#fef3c7">GCV of Fuel (kCal/kg)</span>	<span style="background:#bfdbfe">Efficiency (%)</span>
+<span style="background:#d1fae5">8000</span>	<span style="background:#d1fae5">650</span>	<span style="background:#fef3c7">1000</span>	<span style="background:#fef3c7">7500</span>	<span style="background:#bfdbfe">= (A2*B2)/(C2*D2)*100</span>
+    </pre>
+    <p>
+      Now, ask:  
+      <strong>"How much Steam Production is required to achieve 75% efficiency?"</strong>
+    </p>
+  </div>
+
+  <!-- Steps -->
+  <div class="step">
+    <h4><i class="fa-solid fa-list-ol"></i> Steps to Use Goal Seek</h4>
+    <ol>
+      <li>Go to <strong>Data → What-If Analysis → Goal Seek</strong>.</li>
+      <li>In the Goal Seek window:
+        <ul>
+          <li><strong>Set cell:</strong> The cell containing the formula (e.g., <code>C2</code> for Profit, or <code>E2</code> for Efficiency).</li>
+          <li><strong>To value:</strong> Enter your target (e.g., <strong>80</strong> for Profit or <strong>75</strong> for Efficiency).</li>
+          <li><strong>By changing cell:</strong> The input cell (e.g., <code>A2</code> for Selling Price or Steam Produced).</li>
+        </ul>
+      </li>
+      <li>Click <strong>OK</strong> → Excel adjusts the input to reach the target value.</li>
+    </ol>
+  </div>
+
+  <!-- Tip -->
+  <div class="tip">
+    <i class="fa-solid fa-lightbulb"></i> 
+    Use Goal Seek when you have a fixed relationship/formula and need to reverse-calculate an input efficiently.
+  </div>
+
+  <!-- Practice Exercise -->
+  <div class="exercise">
+    <h4><i class="fa-solid fa-dumbbell"></i> Practice Exercise</h4>
+    <ol>
+      <li>Create the boiler efficiency table above.</li>
+      <li>Use the formula: <code>=(SteamProduced*Enthalpy)/(Fuel*GCV)*100</code> in <strong>Efficiency (%)</strong>.</li>
+      <li>Use Goal Seek to find the <strong>required Steam Production</strong> for achieving a target efficiency of <strong>80%</strong>.</li>
+      <li>Experiment with different target efficiencies (70%, 85%, etc.) to observe the impact.</li>
+    </ol>
+  </div>
+</div>
+
+
+<!-- Text to Columns -->
+<div id="text-to-columns" class="card">
+  <h3><i class="fa-solid fa-scissors"></i> 8) Text to Columns — MATNR & WBS Parsing</h3>
+  <p class="intro">
+    Learn how to split structured codes into meaningful parts using <strong>Data → Text to Columns</strong> (Fixed Width / Delimited). 
+    We’ll also show formula alternatives (<code>LEFT</code>/<code>MID</code>/<code>RIGHT</code> and <code>TEXTSPLIT</code>) for verification or automation.
+  </p>
+
+  <!-- MATNR -->
+  <h4><i class="fa-solid fa-barcode"></i> A) Split MATNR (Fixed Width)</h4>
+  <p><strong>Pattern:</strong> <code>F</code> + <code>CUST(4)</code> + <code>NS(1)</code> + <code>PGMA(5)</code> + <code>DU(3)</code></p>
+
+  <div class="grid cols-2">
+    <div>
+      <h5>1) Practice Data (TSV)</h5>
+      <button class="copy-btn" data-target="matnr-tsv">Copy TSV</button>
+      <div class="copy-toast">Copied!</div>
+      <div class="prewrap small">
+        <pre id="matnr-tsv">MATNR
+F1732124835002
+F1732112345007
+F9001111114001
+F8000123456003
+F1732100015999</pre>
+      </div>
+      <div class="tip small"><i class="fa-solid fa-lightbulb"></i> Paste into Excel (A1). Keep a copy of the raw column before splitting.</div>
+    </div>
+
+    <div>
+      <h5>2) Goal (Output Columns)</h5>
+      <div class="prewrap small">
+        <pre>Prefix | CUST | NS | PGMA  | DU
+F      | 1732 | 1  | 24835 | 002
+F      | 1732 | 1  | 12345 | 007
+F      | 9001 | 1  | 11114 | 001
+F      | 8000 | 1  | 12345 | 003
+F      | 1732 | 1  | 00015 | 999</pre>
+      </div>
+    </div>
+  </div>
+
+  <h5>3) Steps — Fixed Width (Recommended)</h5>
+  <ol class="steps">
+    <li>Select the <strong>MATNR</strong> column.</li>
+    <li>Go to <strong>Data → Text to Columns</strong>.</li>
+    <li>Choose <strong>Fixed width</strong> → <strong>Next</strong>.</li>
+    <li>Click to add splits at positions: after char <strong>1</strong>, <strong>5</strong>, <strong>6</strong>, <strong>11</strong>.  
+      <div class="prewrap small"><pre>F | 1732 | 1 | 24835 | 002
+^1   ^5     ^6   ^11</pre></div>
+    </li>
+    <li>Click <strong>Finish</strong>. Rename the new headers to: <strong>Prefix, CUST, NS, PGMA, DU</strong>.</li>
+  </ol>
+
+  <h5>4) Optional — Formula Check (no split)</h5>
+  <p>If MATNR is in <code>A2</code>:</p>
+  <div class="prewrap small">
+    <pre>Prefix: =LEFT(A2,1)
+CUST:   =MID(A2,2,4)
+NS:     =MID(A2,6,1)
+PGMA:   =MID(A2,7,5)
+DU:     =RIGHT(A2,3)</pre>
+  </div>
+
+  <div class="callout small">
+    <i class="fa-solid fa-circle-info"></i> Why fixed width? Because MATNR blocks have consistent lengths, so fixed splits are reliable and fast.
+  </div>
+
+  <hr style="border:none; border-top:1px dashed #e5e7eb; margin:1rem 0;">
+
+  <!-- WBS -->
+  <h4><i class="fa-solid fa-diagram-project"></i> B) Split WBS (Delimited)</h4>
+  <p><strong>Example:</strong> <code>U6/1732-DL-142-1-24-835</code> → <strong>CUST 1732</strong>, <strong>Stage DL</strong>, <strong>DPN 142</strong>, <strong>PG 24</strong>, <strong>MA 835</strong></p>
+
+  <div class="grid cols-2">
+    <div>
+      <h5>1) Practice Data (TSV)</h5>
+      <button class="copy-btn" data-target="wbs-tsv">Copy TSV</button>
+      <div class="copy-toast">Copied!</div>
+      <div class="prewrap small">
+        <pre id="wbs-tsv">WBS
+U6/1732-DL-142-1-24-835
+U5/9001-RE-120-2-18-450
+U6/1732-DL-142-1-30-700
+U4/8000-PG-098-1-16-300
+U3/1732-MA-142-1-24-835</pre>
+      </div>
+    </div>
+
+    <div>
+      <h5>2) Tokens & Mapping</h5>
+      <div class="prewrap small">
+        <pre>Split tokens (by "/" and "-"): 
+U6 | 1732 | DL | 142 | 1 | 24 | 835
+Map:
+CUST = token 2  → 1732
+Stage = token 3 → DL
+DPN = token 4   → 142
+PG = token 6    → 24
+MA = token 7    → 835
+(token 5 = 1 can be kept as NS if needed)</pre>
+      </div>
+    </div>
+  </div>
+
+  <h5>3) Steps — Delimited (All Excel versions)</h5>
+  <ol class="steps">
+    <li><strong>Normalize the delimiter</strong>: Press <strong>Ctrl+H</strong> → Replace <code>/</code> with <code>-</code> (so we only have hyphens).</li>
+    <li>Select the WBS column → <strong>Data → Text to Columns</strong>.</li>
+    <li>Choose <strong>Delimited</strong> → tick <strong>Other</strong> and enter <strong>-</strong> → <strong>Finish</strong>.</li>
+    <li>You’ll get columns: <code>U6 | 1732 | DL | 142 | 1 | 24 | 835</code>.  
+        Add headers and map as per the table above (CUST, Stage, DPN, PG, MA). Keep the <code>1</code> as <em>NS</em> if your process needs it.</li>
+  </ol>
+
+</div>
+
+
+
+
+<!-- Flash Fill Section -->
+<div id="flash-fill" class="card">
+  <h3><i class="fa-solid fa-bolt"></i> 9) Flash Fill (Quick Data Formatting)</h3>
+
+  <p class="intro">
+    <strong>Flash Fill</strong> in Excel helps you quickly **auto-fill data** based on a detected pattern — without writing formulas.  
+    Simply provide an example, and Excel intelligently fills the rest.
+  </p>
+
+  <!-- Example 1 -->
+  <div class="data-block">
+    <h4><i class="fa-solid fa-database"></i> Example 1: Extract Project Code from SO</h4>
+    <p>Copy this TSV into Excel (Column A = SO) and then Flash Fill Column B for Project Code:</p>
+    <button class="copy-btn" data-target="flash-tsv1">Copy TSV</button>
+    <div class="copy-toast">Copied!</div>
+    <div class="prewrap small">
+      <pre id="flash-tsv1">SO	ProjectCode
+720001001	72000
+720001002	
+900112345	
+720001003	
+800012345	</pre>
+    </div>
+    <ul class="steps">
+      <li>Type <code>72000</code> manually next to the first SO.</li>
+      <li>Press <kbd>Ctrl</kbd> + <kbd>E</kbd> → Excel fills remaining Project Codes automatically.</li>
+    </ul>
+  </div>
+
+  <!-- Example 2 -->
+  <div class="data-block">
+    <h4><i class="fa-solid fa-tags"></i> Example 2: Extract Product Family from Description</h4>
+    <p>Copy this TSV into Excel (Column A = ProductDesc) and Flash Fill Column B for Family:</p>
+    <button class="copy-btn" data-target="flash-tsv2">Copy TSV</button>
+    <div class="copy-toast">Copied!</div>
+    <div class="prewrap small">
+      <pre id="flash-tsv2">ProductDesc	Family
+Boiler-A	
+Boiler-B	
+Economiser-C	
+Superheater-XL	
+Reheater-Z</pre>
+    </div>
+    <ul class="steps">
+      <li>Type the family name manually for the first row (e.g., <code>Boiler</code> for <strong>Boiler-A</strong>).</li>
+      <li>Press <kbd>Ctrl</kbd> + <kbd>E</kbd> → Excel auto-fills the rest of the Family column.</li>
+    </ul>
+  </div>
+
+  <!-- Example 3 -->
+  <div class="data-block">
+    <h4><i class="fa-solid fa-calendar-day"></i> Example 3: Extract Year from Dispatch Dates</h4>
+    <p>Copy this TSV into Excel (Column A = DispatchDate) and Flash Fill Column B for Year:</p>
+    <button class="copy-btn" data-target="flash-tsv3">Copy TSV</button>
+    <div class="copy-toast">Copied!</div>
+    <div class="prewrap small">
+      <pre id="flash-tsv3">DispatchDate	Year
+12-04-2023	
+15-08-2022	
+07-01-2025	
+20-11-2024	
+05-03-2023</pre>
+    </div>
+    <ul class="steps">
+      <li>Type the year manually for the first row (e.g., <code>2023</code>).</li>
+      <li>Press <kbd>Ctrl</kbd> + <kbd>E</kbd> → Excel fills remaining years automatically.</li>
+    </ul>
+  </div>
+
+  <!-- Advanced Example: PIPE ID -->
+  <div class="data-block">
+    <h4><i class="fa-solid fa-industry"></i> Advanced Example: Extract OD, Thickness, Length, Material from PIPE IDs</h4>
+    <p>Copy this TSV into Excel (Column A = PIPEID) and leave Columns B–E blank for Flash Fill:</p>
+    <button class="copy-btn" data-target="pipe-tsv">Copy TSV</button>
+    <div class="copy-toast">Copied!</div>
+    <div class="prewrap small">
+      <pre id="pipe-tsv">PIPEID	OD	Thickness	Length	Material
+ID PIPE-400X95X6000-SA106GRC
+ID PIPE-420X68X6000-SA106GRC
+ID PIPE-100X22.06X6000-SA106GRC
+ID PIPE-175X36.92X6000-SA106GRC
+ID PIPE-200X34.6X6000-SA106GRC
+ID PIPE-200X41.87X6000-SA106GRC
+ID PIPE-350X58.97X6000-SA106GRC
+ID PIPE-350X71.6X6000-SA106GRC
+ID PIPE-450X91.42X6100-SA106GRC
+ID PIPE-520X14.03X6000-SA106GRC
+ID PIPE-622X17.89X6000-SA106GRC
+</pre>
+    </div>
+    <ul class="steps">
+      <li>Type the **OD** of the first pipe manually in Column B.</li>
+      <li>Type **Thickness**, **Length**, and **Material** in Columns C, D, and E.</li>
+      <li>Press <kbd>Ctrl</kbd> + <kbd>E</kbd> for each column → Excel auto-fills remaining rows.</li>
+      <li>Verify decimal values carefully for OD and Thickness.</li>
+    </ul>
+    <div class="tip small">
+      <i class="fa-solid fa-lightbulb"></i> Flash Fill works best when patterns are consistent.
+    </div>
+  </div>
+
+
+</div>
+
+
+
+
+
+
+<!-- Macro Section -->
+<div id="macro" class="card">
+  <h3><i class="fa-solid fa-gears"></i> 11) Macros — Automating Data Updates</h3>
+
+  <p class="intro">
+    Macros in Excel allow you to automate repetitive tasks. In this exercise, we’ll create a macro to update the Customer Requests sheet with dispatch quantities from SAP data.
+    The setup uses a **central Macro workbook** and a **VBS script** to run it invisibly.
+  </p>
+
+  <!-- Folder Structure -->
+  <div class="data-block">
+    <h4>Folder Structure</h4>
+    <pre class="prewrap">
+D:\AutomatedJobs
+│
+├─ Input          → Place incoming Excel files (SAP_Data.xlsx, Customer_Requests.xlsx)
+├─ Output         → Updated Customer_Requests.xlsx will be saved here
+├─ Macro          → Store Macros_Manager.xlsm here
+├─ VBS            → Store Run_Macro.vbs here
+    </pre>
+    <div class="tip">
+      <i class="fa-solid fa-lightbulb"></i> Keep consistent file names and sheet names (Sheet1) to ensure automation works correctly.
+    </div>
+  </div>
+
+  <!-- Macro Code -->
+  <div class="data-block">
+    <h4><i class="fa-solid fa-file-code"></i> Macro Workbook</h4>
+    <p><strong>File:</strong> <code>D:\AutomatedJobs\Macro\Macros_Manager.xlsm</code></p>
+    <p>The macro updates the <strong>DispatchQty</strong> column in Customer Requests:</p>
+    <div class="prewrap small">
+      <pre>
+Sub UpdateDispatchQty()
+    Dim custWB As Workbook
+    Dim sapWB As Workbook
+    Dim custWS As Worksheet
+    Dim sapWS As Worksheet
+    Dim custLR As Long, sapLR As Long
+    Dim i As Long, j As Long
+    
+    ' Set references to open workbooks
+    Set custWB = Workbooks("Customer_Requests.xlsx")
+    Set sapWB = Workbooks("SAP_Data.xlsx")
+    
+    Set custWS = custWB.Sheets("Sheet1")
+    Set sapWS = sapWB.Sheets("Sheet1")
+    
+    custLR = custWS.Cells(Rows.Count, 1).End(xlUp).Row
+    sapLR = sapWS.Cells(Rows.Count, 1).End(xlUp).Row
+    
+    For i = 2 To custLR
+        For j = 2 To sapLR
+            If custWS.Cells(i, 1).Value = sapWS.Cells(j, 1).Value Then
+                custWS.Cells(i, 4).Value = sapWS.Cells(j, 3).Value
+                Exit For
+            End If
+        Next j
+    Next i
+    
+    ' Optional: show completion message on top
+    ' MsgBox "Customer DispatchQty updated successfully!", vbInformation + vbSystemModal, "Update Complete"
+End Sub
+      </pre>
+    </div>
+    <p class="tip"><i class="fa-solid fa-lightbulb"></i> Remove the <code>MsgBox</code> line for fully silent automation when running via VBS.</p>
+  </div>
+
+  <!-- VBS Script -->
+  <div class="data-block">
+    <h4><i class="fa-solid fa-file-code"></i> VBS Script</h4>
+    <p><strong>File:</strong> <code>D:\AutomatedJobs\VBS\Run_Macro.vbs</code></p>
+    <p>This script runs the macro invisibly, closes all workbooks, and saves output with a **VBScript-safe timestamp**:</p>
+    <div class="prewrap small">
+      <pre>
+Dim xlApp, wbMacro, wbSAP, wbCust
+Dim ts, d, t
+
+Set xlApp = CreateObject("Excel.Application")
+
+' Run Excel invisible and suppress alerts
+xlApp.Visible = False
+xlApp.DisplayAlerts = False
+
+' Open Macro workbook
+Set wbMacro = xlApp.Workbooks.Open("D:\AutomatedJobs\Macro\Macros_Manager.xlsm")
+
+' Open SAP and Customer files from Input folder
+Set wbSAP = xlApp.Workbooks.Open("D:\AutomatedJobs\Input\SAP_Data.xlsx")
+Set wbCust = xlApp.Workbooks.Open("D:\AutomatedJobs\Input\Customer_Requests.xlsx")
+
+' Run macro
+xlApp.Run "Macros_Manager.xlsm!UpdateDispatchQty"
+
+' Create VBScript-safe timestamp: YYYYMMDD_HHMMSS
+d = Year(Now) & Right("0" & Month(Now),2) & Right("0" & Day(Now),2)
+t = Right("0" & Hour(Now),2) & Right("0" & Minute(Now),2) & Right("0" & Second(Now),2)
+ts = d & "_" & t
+
+' Save updated Customer Requests in Output folder with timestamp
+wbCust.SaveAs "D:\AutomatedJobs\Output\Customer_Requests_Updated_" & ts & ".xlsx"
+
+' Close all workbooks
+wbCust.Close False
+wbSAP.Close False
+wbMacro.Close False
+
+' Quit Excel
+xlApp.Quit
+
+' Release objects
+Set wbCust = Nothing
+Set wbSAP = Nothing
+Set wbMacro = Nothing
+Set xlApp = Nothing
+      </pre>
+    </div>
+    <div class="tip">
+      <i class="fa-solid fa-lightbulb"></i> Double-click <code>Run_Macro.vbs</code> to execute. It runs invisibly, updates data, saves output with timestamp, and closes everything automatically.
+    </div>
+  </div>
+
+  <!-- Explanation -->
+  <div class="step">
+    <h4><i class="fa-solid fa-list-ol"></i> How It Works</h4>
+    <ol class="steps">
+      <li>The VBS script opens Excel invisibly and disables alerts.</li>
+      <li>It opens the Macro workbook, SAP Data workbook, and Customer Requests workbook.</li>
+      <li>Runs the <code>UpdateDispatchQty</code> macro.</li>
+      <li>Saves the updated Customer Requests workbook to the Output folder with a **timestamped name** safe for VBScript.</li>
+      <li>Closes all workbooks and quits Excel automatically.</li>
+    </ol>
+  </div>
+</div>
+
+
+<!-- Assignment: PO Weighted Moving Average -->
+<div id="po-assignment" class="card">
+  <h3><i class="fa-solid fa-clipboard-list"></i> Assignment — PO series & Weighted Moving Average</h3>
+
+  <p class="intro">
+    Paste the TSV dataset below into a new sheet (start at <code>A1</code>). The dataset contains 100 purchase orders for the same item on different dates.
+    Your tasks:
+    <ol>
+      <li>Compute <strong>Amount</strong> = Qty × Rate.</li>
+      <li>Compute the <strong>cumulative weighted average price</strong> after each PO (running WAvg).</li>
+      <li>(Optional) Compute a 3-period <strong>weighted moving average</strong> (last 3 POs, weighted by Qty).</li>
+      <li>Plot a <strong>line chart</strong> with <em>Date</em> on the X axis and two series: <em>PO Rate</em> and <em>Cumulative WAvg</em> (or Rolling WAvg). Format the chart with markers and date axis.
+    </ol>
+  </p>
+
+  <h4><i class="fa-solid fa-database"></i> TSV — Copy & Paste into Excel (Sheet name: <strong>PO_Assignment</strong>)</h4>
+  <button class="copy-btn" data-target="po-tsv">Copy TSV</button>
+  <div class="copy-toast">Copied!</div>
+  <div class="prewrap small">
+<pre id="po-tsv">PO_NO	PO_ITEM	PO_DATE	ITEM_DESC	QTY	RATE
+PO0001	9001	20-05-2025	Boiler-A	10	12050
+PO0002	9001	21-05-2025	Boiler-A	5	11980
+PO0003	9001	22-05-2025	Boiler-A	20	12120
+PO0004	9001	23-05-2025	Boiler-A	8	12010
+PO0005	9001	24-05-2025	Boiler-A	15	11950
+PO0006	9001	25-05-2025	Boiler-A	25	12080
+PO0007	9001	26-05-2025	Boiler-A	30	12150
+PO0008	9001	27-05-2025	Boiler-A	12	11990
+PO0009	9001	28-05-2025	Boiler-A	18	12030
+PO0010	9001	29-05-2025	Boiler-A	6	11960
+PO0011	9001	30-05-2025	Boiler-A	10	12040
+PO0012	9001	31-05-2025	Boiler-A	5	11970
+PO0013	9001	01-06-2025	Boiler-A	20	12100
+PO0014	9001	02-06-2025	Boiler-A	8	12020
+PO0015	9001	03-06-2025	Boiler-A	15	11960
+PO0016	9001	04-06-2025	Boiler-A	25	12090
+PO0017	9001	05-06-2025	Boiler-A	30	12130
+PO0018	9001	06-06-2025	Boiler-A	12	11985
+PO0019	9001	07-06-2025	Boiler-A	18	12025
+PO0020	9001	08-06-2025	Boiler-A	6	11955
+PO0021	9001	09-06-2025	Boiler-A	10	12060
+PO0022	9001	10-06-2025	Boiler-A	5	11990
+PO0023	9001	11-06-2025	Boiler-A	20	12110
+PO0024	9001	12-06-2025	Boiler-A	8	12015
+PO0025	9001	13-06-2025	Boiler-A	15	11940
+PO0026	9001	14-06-2025	Boiler-A	25	12070
+PO0027	9001	15-06-2025	Boiler-A	30	12145
+PO0028	9001	16-06-2025	Boiler-A	12	11995
+PO0029	9001	17-06-2025	Boiler-A	18	12040
+PO0030	9001	18-06-2025	Boiler-A	6	11965
+PO0031	9001	19-06-2025	Boiler-A	10	12035
+PO0032	9001	20-06-2025	Boiler-A	5	11975
+PO0033	9001	21-06-2025	Boiler-A	20	12105
+PO0034	9001	22-06-2025	Boiler-A	8	12005
+PO0035	9001	23-06-2025	Boiler-A	15	11955
+PO0036	9001	24-06-2025	Boiler-A	25	12085
+PO0037	9001	25-06-2025	Boiler-A	30	12120
+PO0038	9001	26-06-2025	Boiler-A	12	11988
+PO0039	9001	27-06-2025	Boiler-A	18	12028
+PO0040	9001	28-06-2025	Boiler-A	6	11958
+PO0041	9001	29-06-2025	Boiler-A	10	12045
+PO0042	9001	30-06-2025	Boiler-A	5	11982
+PO0043	9001	01-07-2025	Boiler-A	20	12112
+PO0044	9001	02-07-2025	Boiler-A	8	12018
+PO0045	9001	03-07-2025	Boiler-A	15	11952
+PO0046	9001	04-07-2025	Boiler-A	25	12088
+PO0047	9001	05-07-2025	Boiler-A	30	12135
+PO0048	9001	06-07-2025	Boiler-A	12	11992
+PO0049	9001	07-07-2025	Boiler-A	18	12034
+PO0050	9001	08-07-2025	Boiler-A	6	11960
+PO0051	9001	09-07-2025	Boiler-A	10	12055
+PO0052	9001	10-07-2025	Boiler-A	5	11978
+PO0053	9001	11-07-2025	Boiler-A	20	12108
+PO0054	9001	12-07-2025	Boiler-A	8	12012
+PO0055	9001	13-07-2025	Boiler-A	15	11948
+PO0056	9001	14-07-2025	Boiler-A	25	12076
+PO0057	9001	15-07-2025	Boiler-A	30	12140
+PO0058	9001	16-07-2025	Boiler-A	12	11996
+PO0059	9001	17-07-2025	Boiler-A	18	12036
+PO0060	9001	18-07-2025	Boiler-A	6	11962
+PO0061	9001	19-07-2025	Boiler-A	10	12048
+PO0062	9001	20-07-2025	Boiler-A	5	11984
+PO0063	9001	21-07-2025	Boiler-A	20	12115
+PO0064	9001	22-07-2025	Boiler-A	8	12022
+PO0065	9001	23-07-2025	Boiler-A	15	11958
+PO0066	9001	24-07-2025	Boiler-A	25	12092
+PO0067	9001	25-07-2025	Boiler-A	30	12128
+PO0068	9001	26-07-2025	Boiler-A	12	11990
+PO0069	9001	27-07-2025	Boiler-A	18	12020
+PO0070	9001	28-07-2025	Boiler-A	6	11961
+PO0071	9001	29-07-2025	Boiler-A	10	12052
+PO0072	9001	30-07-2025	Boiler-A	5	11979
+PO0073	9001	31-07-2025	Boiler-A	20	12102
+PO0074	9001	01-08-2025	Boiler-A	8	12008
+PO0075	9001	02-08-2025	Boiler-A	15	11950
+PO0076	9001	03-08-2025	Boiler-A	25	12075
+PO0077	9001	04-08-2025	Boiler-A	30	12142
+PO0078	9001	05-08-2025	Boiler-A	12	11993
+PO0079	9001	06-08-2025	Boiler-A	18	12031
+PO0080	9001	07-08-2025	Boiler-A	6	11957
+PO0081	9001	08-08-2025	Boiler-A	10	12047
+PO0082	9001	09-08-2025	Boiler-A	5	11981
+PO0083	9001	10-08-2025	Boiler-A	20	12107
+PO0084	9001	11-08-2025	Boiler-A	8	12014
+PO0085	9001	12-08-2025	Boiler-A	15	11959
+PO0086	9001	13-08-2025	Boiler-A	25	12082
+PO0087	9001	14-08-2025	Boiler-A	30	12133
+PO0088	9001	15-08-2025	Boiler-A	12	11991
+PO0089	9001	16-08-2025	Boiler-A	18	12029
+PO0090	9001	17-08-2025	Boiler-A	6	11964
+PO0091	9001	18-08-2025	Boiler-A	10	12038
+PO0092	9001	19-08-2025	Boiler-A	5	11986
+PO0093	9001	20-08-2025	Boiler-A	20	12118
+PO0094	9001	21-08-2025	Boiler-A	8	12016
+PO0095	9001	22-08-2025	Boiler-A	15	11954
+PO0096	9001	23-08-2025	Boiler-A	25	12078
+PO0097	9001	24-08-2025	Boiler-A	30	12148
+PO0098	9001	25-08-2025	Boiler-A	12	11997
+PO0099	9001	26-08-2025	Boiler-A	18	12035
+PO0100	9001	27-08-2025	Boiler-A	6	11959</pre>
+  </div>
+
+  <h4>Step-by-step: compute running weighted average & rolling weighted average</h4>
+  <ol class="steps">
+    <li><strong>Paste TSV</strong> into a new sheet and name the sheet <code>PO_Assignment</code>. Ensure columns are:
+      <code>A:PO_NO</code>, <code>B:PO_ITEM</code>, <code>C:PO_DATE</code>, <code>D:ITEM_DESC</code>, <code>E:QTY</code>, <code>F:RATE</code>.</li>
+
+    <li><strong>Convert dates</strong> (if needed): If PO_DATE pasted as text, select column C → <strong>Data → Text to Columns → Delimited → Next → Finish</strong>, then format column C as Date (<em>dd-mm-yyyy</em>) and sort ascending: <strong>Data → Sort → Sort by PO_DATE Ascending</strong>.</li>
+
+    <li><strong>Turn into a Table (recommended)</strong>: Select the range including headers → <kbd>Ctrl</kbd>+<kbd>T</kbd> → check "My table has headers" → name the table (<em>PO_Table</em>) from Table Design → Table Name box (optional).</li>
+
+    <li><strong>Add Amount column</strong> (G): in <code>G2</code> enter:
+      <div class="prewrap"><pre>=E2*F2</pre></div>
+      and drag down (or use structured formula if table: <code>=[@QTY]*[@RATE]</code>).</li>
+
+    <li><strong>Running cumulative sums</strong>:
+      <ul>
+        <li><strong>Cumulative Qty</strong> (H2): <code>=SUM($E$2:E2)</code> → drag down.</li>
+        <li><strong>Cumulative Value</strong> (I2): <code>=SUM($G$2:G2)</code> → drag down.</li>
+        <li><strong>Cumulative WAvg</strong> (J2): <code>=I2/H2</code> → format as number/currency; drag down.</li>
+      </ul>
+      <p><em>Explanation:</em> cumulative WAvg after each PO = (sum of QTY×RATE up to that PO) ÷ (sum of QTY up to that PO).</p>
+    </li>
+
+    <li><strong>3-period Weighted Moving Average (optional)</strong>:
+      <ul>
+        <li>Place formula starting in <strong>K4</strong> (first row where last 3 POs exist). In <code>K4</code> enter:</li>
+        <div class="prewrap"><pre>=SUMPRODUCT(E2:E4, F2:F4) / SUM(E2:E4)</pre></div>
+        <li>Drag this down; for each row it will use the 3 preceding rows (adjust ranges if you start at a different row).</li>
+        <li>Tip: if you want a dynamic formula you can use <code>OFFSET</code> or a structured table with relative references; but the simple SUMPRODUCT window is easiest to explain in class.</li>
+      </ul>
+    </li>
+
+    <li><strong>Check results</strong>: Scroll through column J (Cumulative WAvg) — the weighted average will update gradually as larger qty rows influence the average more.</li>
+
+    <li><strong>Create the chart</strong>:
+      <ol>
+        <li>Sort your table by <code>PO_DATE</code> ascending.</li>
+        <li>Select columns: <code>PO_DATE</code>, <code>RATE</code> and <code>Cumulative WAvg</code> (or Rolling WAvg).</li>
+        <li>Insert → Charts → <strong>Line → Line with Markers</strong>.</li>
+        <li>Right-click the X axis → Format Axis → choose <strong>Date axis</strong> (if Excel offers Axis Type).</li>
+        <li>Format: add axis titles (Date; Price), legend (PO Rate, Cumulative WAvg), and data markers. Optionally add secondary axis if scales differ.</li>
+      </ol>
+    </li>
+
+    <li><strong>Polish</strong>: Add data labels to last points, use a slicer or filter on PO_NO to highlight sections, and add vertical gridlines for months to make trends visible.</li>
+  </ol>
+
+  <div class="tip">
+    <i class="fa-solid fa-lightbulb"></i>
+    Teaching tip: show both <em>cumulative WAvg</em> (how the average evolves with history) and <em>rolling WAvg</em> (how recent POs influence the short-term price). Ask students to explain differences in a short discussion.
+  </div>
+
+  <div class="callout small">
+    <i class="fa-solid fa-circle-info"></i> Deliverable: Submit the worksheet <code>PO_Assignment</code> with columns Amount, CumulativeQty, CumulativeValue, CumulativeWAvg and Rolling3WAvg and a line chart showing PO Rate and Cumulative WAvg.
+  </div>
+</div>
+
+
+
+
+      </section>
+    </main>
+  </div>
+
+<script>
+  $(function () {
+    // Sidebar toggle
+    $('.menu-toggle').on('click', function () {
+      $('#sidebar').toggleClass('active');
+    });
+
+    // Copy button functionality
+    $('.copy-btn').on('click', function () {
+      const targetId = $(this).data('target');
+      const text = $('#' + targetId).text();
+      
+      // Use Clipboard API if supported, else fallback
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(() => {
+          const $toast = $(this).siblings('.copy-toast');
+          $toast.addClass('show');
+          setTimeout(() => $toast.removeClass('show'), 1500);
+        });
+      } else {
+        // Fallback for older browsers
+        const tempInput = $('<textarea>');
+        $('body').append(tempInput);
+        tempInput.val(text).select();
+        document.execCommand('copy');
+        tempInput.remove();
+        const $toast = $(this).siblings('.copy-toast');
+        $toast.addClass('show');
+        setTimeout(() => $toast.removeClass('show'), 1500);
+      }
+    });
+
+    // Smooth scroll
+    const $links = $('.sidemenu .nav a');
+    $links.on('click', function (e) {
+      const href = $(this).attr('href');
+      if (href && href.startsWith('#')) {
+        e.preventDefault();
+        const $el = $(href);
+        if ($el.length) {
+          $('html, body').animate({ scrollTop: $el.offset().top - 70 }, 300);
+        }
+      }
+    });
+
+    // Scrollspy to highlight active menu link
+    const $sections = $('.section, #sheet1, #sheet2, #sheet3, #sheet4, #pad-keys, #vlookup, #unicode, #pivot, #chart,#index-match,#goal-seek,#text-to-columns,#flash-fill,#macro,#po-assignment');
+    $(window).on('scroll', function () {
+      const pos = $(this).scrollTop() + 90;
+      let currentId = null;
+      $sections.each(function () {
+        const top = $(this).offset().top;
+        if (pos >= top) currentId = this.id;
+      });
+      if (currentId) {
+        $links.removeClass('active');
+        $links.filter(`[href="#${currentId}"]`).addClass('active');
+      }
+    });
+  });
+</script>
+</body>
 </html>
